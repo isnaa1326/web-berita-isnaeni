@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  const API_KEY = '851bdcb35c914ef78c3eb1b139d71a4e';
+  const API_KEY = '74fba944270c441eb6658ea6dc39edf1';
   const BASE_URL = 'https://newsapi.org/v2';
   const PROXY_URL = 'https://api.allorigins.win/raw?url='; // 🔥 proxy agar lolos CORS
   const newsContainer = $('#news-container');
@@ -97,3 +97,4 @@ $(document).ready(function () {
     });
   }
 });
+
