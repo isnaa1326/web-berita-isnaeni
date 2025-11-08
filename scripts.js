@@ -1,11 +1,14 @@
 $(document).ready(function () {
   const API_KEY = '851bdcb35c914ef78c3eb1b139d71a4e';
   const BASE_URL = 'https://newsapi.org/v2';
+  const PROXY_URL = 'https://api.allorigins.win/raw?url='; // 🔥 proxy agar lolos CORS
   const newsContainer = $('#news-container');
   let currentCategory = 'general';
 
+  // Muat berita pertama kali
   fetchNews(currentCategory);
 
+  // Ganti kategori
   $('.category-btn').on('click', function () {
     $('.category-btn').removeClass('active');
     $(this).addClass('active');
@@ -13,29 +16,35 @@ $(document).ready(function () {
     fetchNews(currentCategory);
   });
 
+  // Tombol cari diklik
   $('#search-btn').on('click', function () {
     const term = $('#search-input').val().trim();
     if (term) fetchNews(currentCategory, term);
   });
 
+  // Enter di input pencarian
   $('#search-input').on('keypress', function (e) {
     if (e.which === 13) $('#search-btn').click();
   });
 
+  // Fungsi ambil berita
   function fetchNews(category, searchTerm = '') {
     newsContainer.html(`
-      <div class="loading">
-        <i class="fas fa-spinner"></i>
+      <div class="loading text-center py-5">
+        <i class="fas fa-spinner fa-spin fa-2x mb-2"></i>
         <p>Memuat berita...</p>
       </div>
     `);
 
-    let url = searchTerm
-      ? `${BASE_URL}/everything?q=${encodeURIComponent(
-          searchTerm
-        )}&sortBy=publishedAt&apiKey=${API_KEY}`
+    // Tentukan URL berdasarkan kategori / pencarian
+    let apiUrl = searchTerm
+      ? `${BASE_URL}/everything?q=${encodeURIComponent(searchTerm)}&sortBy=publishedAt&apiKey=${API_KEY}`
       : `${BASE_URL}/top-headlines?category=${category}&country=us&apiKey=${API_KEY}`;
 
+    // Bungkus dengan proxy agar tidak CORS
+    const url = PROXY_URL + encodeURIComponent(apiUrl);
+
+    // Ambil data dari API melalui proxy
     $.getJSON(url, function (data) {
       if (data.articles && data.articles.length > 0) {
         displayNews(data.articles);
@@ -57,6 +66,7 @@ $(document).ready(function () {
     });
   }
 
+  // Fungsi menampilkan berita ke halaman
   function displayNews(articles) {
     newsContainer.empty();
     articles.forEach((a) => {
